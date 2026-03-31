@@ -2,6 +2,7 @@ import glob
 import os
 from worldscore.benchmark.metrics.third_party.reprojection_error_metrics import ReprojectionErrorMetric
 import pandas as pd
+import json
 
 g_metric = ReprojectionErrorMetric()
 
@@ -25,17 +26,20 @@ if __name__ == "__main__":
     print(f"{'Folder Name':<20} | {'DROID Score':<15}")
     print("-" * 40)
 
-    for folder_name in subfolders:
-        folder_path = os.path.join(parent_folder, folder_name)
+    with open("droid_results.jsonl", "w") as jsonl_file:
+        for folder_name in subfolders:
+            folder_path = os.path.join(parent_folder, folder_name)
 
-        if os.path.isdir(folder_path):
-            score = calculate_droid_score(folder_path)
-            
-            if score is not None:
-                results[folder_name] = score
-                print(f"{folder_name:<20} | {score:.4f}")
-            else:
-                print(f"{folder_name:<20} | No images found.")
+            if os.path.isdir(folder_path):
+                score = calculate_droid_score(folder_path)
+                
+                if score is not None:
+                    results[folder_name] = score
+                    print(f"{folder_name:<20} | {score:.4f}")
+                    jsonl_file.write(json.dumps({"folder": folder_name, "droid_score": score}) + "\n")
+                    jsonl_file.flush()
+                else:
+                    print(f"{folder_name:<20} | No images found.")
 
     df = pd.DataFrame(list(results.items()), columns=['Folder', 'DROID Score'])
     df.to_csv("droid_results.csv", index=False)
