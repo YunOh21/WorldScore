@@ -17,7 +17,7 @@ def calculate_droid_score(frame_folder_path):
     return g_error
 
 if __name__ == "__main__":
-    parent_folder = "/home/ubuntu/world-model-eval/video_frames" 
+    parent_folder = "/home/ubuntu/world-model-eval/video_frames_real" 
     
     results = {}
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     print(f"{'Folder Name':<20} | {'DROID Score':<15}")
     print("-" * 40)
 
-    with open("droid_results.jsonl", "w") as jsonl_file:
+    with open("droid_results_real.jsonl", "w") as jsonl_file:
         for folder_name in subfolders:
             folder_path = os.path.join(parent_folder, folder_name)
 
@@ -42,4 +42,4 @@ if __name__ == "__main__":
                     print(f"{folder_name:<20} | No images found.")
 
     df = pd.DataFrame(list(results.items()), columns=['Folder', 'DROID Score'])
-    df.to_csv("droid_results.csv", index=False)
+    df.to_csv("droid_results_real.csv", index=False)

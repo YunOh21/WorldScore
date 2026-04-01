@@ -1,20 +1,20 @@
 import glob
 import os
-from worldscore.benchmark.metrics.third_party.flow_aepe_metrics import OpticalFlowAverageEndPointErrorMetric
+from worldscore.benchmark.metrics.third_party.clip_mlp_aesthetic_metrics import CLIPMLPAestheticScoreMetric
 import pandas as pd
 import json
 
-t_metric = OpticalFlowAverageEndPointErrorMetric()
+s_metric = CLIPMLPAestheticScoreMetric()
 
-def calculate_raft_score(frame_folder_path):
+def calculate_subjective_quality(frame_folder_path):
     image_list = sorted(glob.glob(os.path.join(frame_folder_path, "*.png")))
     
     if not image_list:
         return None
 
-    t_error = t_metric._compute_scores(image_list)
+    s_quality = s_metric._compute_scores(image_list)
     
-    return t_error
+    return s_quality
 
 if __name__ == "__main__":
     parent_folder = "/home/ubuntu/world-model-eval/video_frames_real" 
@@ -23,23 +23,23 @@ if __name__ == "__main__":
 
     subfolders = sorted(os.listdir(parent_folder))
 
-    print(f"{'Folder Name':<20} | {'RAFT Score':<15}")
+    print(f"{'Folder Name':<20} | {'CLIP Aesthetic Score':<15}")
     print("-" * 40)
 
-    with open("raft_results_real.jsonl", "w") as jsonl_file:
+    with open("subjective_results_real.jsonl", "w") as jsonl_file:
         for folder_name in subfolders:
             folder_path = os.path.join(parent_folder, folder_name)
 
             if os.path.isdir(folder_path):
-                score = calculate_raft_score(folder_path)
+                score = calculate_subjective_quality(folder_path)
                 
                 if score is not None:
                     results[folder_name] = score
                     print(f"{folder_name:<20} | {score:.4f}")
-                    jsonl_file.write(json.dumps({"folder": folder_name, "raft_score": score}) + "\n")
+                    jsonl_file.write(json.dumps({"folder": folder_name, "subjective_results": score}) + "\n")
                     jsonl_file.flush()
                 else:
                     print(f"{folder_name:<20} | No images found.")
 
-    df = pd.DataFrame(list(results.items()), columns=['Folder', 'RAFT Score'])
-    df.to_csv("raft_results_real.csv", index=False)
+    df = pd.DataFrame(list(results.items()), columns=['Folder', 'Subjective Quality'])
+    df.to_csv("subjective_results_real.csv", index=False)
