@@ -17,7 +17,7 @@ def calculate_raft_score(frame_folder_path):
     return t_error
 
 if __name__ == "__main__":
-    parent_folder = "/home/ubuntu/world-model-eval/video_frames_real" 
+    parent_folder = "/home/ubuntu/world-model-eval/video_frames_weird_first"
     
     results = {}
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     print(f"{'Folder Name':<20} | {'RAFT Score':<15}")
     print("-" * 40)
 
-    with open("raft_results_real.jsonl", "w") as jsonl_file:
+    with open("/home/ubuntu/WorldScore/calc/basic/raft_results_weird_first.jsonl", "w") as jsonl_file:
         for folder_name in subfolders:
             folder_path = os.path.join(parent_folder, folder_name)
 
@@ -42,4 +42,4 @@ if __name__ == "__main__":
                     print(f"{folder_name:<20} | No images found.")
 
     df = pd.DataFrame(list(results.items()), columns=['Folder', 'RAFT Score'])
-    df.to_csv("raft_results_real.csv", index=False)
+    df.to_csv("/home/ubuntu/WorldScore/calc/basic/raft_results_weird_first.csv", index=False)
